@@ -1,0 +1,8 @@
+.imagen-producto {
+  height: 100%;
+}
+
+.imagen-producto img {
+  height: 250px;
+  object-fit: cover;
+}

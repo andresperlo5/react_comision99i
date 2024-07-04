@@ -1,0 +1,22 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  /* Para poder fijar el pie de página con posición absoluta */
+  position: relative;
+  /* Medida mínima */
+  min-height: 100vh;
+}
+
+footer {
+  /* Posicionar abajo */
+  position: absolute;
+  bottom: 0;
+  /* Ocupar todo el ancho disponible */
+  width: 100%;
+  min-height: 18vh;
+  /* Solo para probar cómo se ve */
+  background: #ccc;
+}
