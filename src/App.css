@@ -12,7 +12,7 @@ body {
 
 footer {
   /* Posicionar abajo */
-  position: absolute;
+  position: sticky;
   bottom: 0;
   /* Ocupar todo el ancho disponible */
   width: 100%;

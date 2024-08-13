@@ -14,19 +14,62 @@ import AdminProductsPage from "../pages/AdminProductsPage";
 import ErrorPage from "../pages/ErrorPage";
 import NavbarC from "../components/NavbarC";
 import FooterC from "../components/FooterC";
+import PrivateRoute from "../components/PrivateRoute";
 
 const RoutesViews = () => {
   return (
     <>
       <NavbarC />
       <Routes>
-        <Route path="/admin-productos" element={<AdminProductsPage />} />
-        <Route path="/admin-usuarios" element={<AdminUsersPage />} />
-        <Route path="/admin-inicio" element={<AdminPage />} />
+        <Route
+          path="/admin-productos"
+          element={
+            <PrivateRoute rol={"admin"}>
+              <AdminProductsPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin-usuarios"
+          element={
+            <PrivateRoute rol={"admin"}>
+              <AdminUsersPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin-inicio"
+          element={
+            <PrivateRoute rol={"admin"}>
+              <AdminPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/usuario-favoritos"
+          element={
+            <PrivateRoute rol={"usuario"}>
+              <UserFavPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/usuario-carrito"
+          element={
+            <PrivateRoute rol={"usuario"}>
+              <UserCartPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/usuario-inicio"
+          element={
+            <PrivateRoute rol={"usuario"}>
+              <UserPage />
+            </PrivateRoute>
+          }
+        />
         <Route path="/detalle-producto/:id" element={<ProductPage />} />
-        <Route path="/usuario-favoritos" element={<UserFavPage />} />
-        <Route path="/usuario-carrito" element={<UserCartPage />} />
-        <Route path="/usuario-inicio" element={<UserPage />} />
         <Route path="/iniciar-sesion" element={<LoginPage />} />
         <Route path="/registrarse" element={<RegisterPage />} />
         <Route path="/contacto" element={<ContactPage />} />

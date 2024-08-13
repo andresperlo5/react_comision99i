@@ -2,6 +2,8 @@ import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import clientAxios from "../helpers/axios";
 
 const FormC = ({ idPagina }) => {
   const navigate = useNavigate();
@@ -17,7 +19,7 @@ const FormC = ({ idPagina }) => {
     setFormLogin({ ...formLogin, [ev.target.name]: ev.target.value });
   };
 
-  const handleClick = (ev) => {
+  const handleClick = async (ev) => {
     ev.preventDefault();
     if (!formRegister.usuario) {
       console.log("usuario");
@@ -49,70 +51,69 @@ const FormC = ({ idPagina }) => {
       }
 
       if (formRegister.contrasenia === formRegister.rcontrasenia) {
-        const nuevoUsuario = {
-          id: usuarios[usuarios.length - 1]?.id + 1 || 1,
+        const result = await clientAxios.post("/usuarios", {
           nombreUsuario: formRegister.usuario,
           contrasenia: formRegister.contrasenia,
-          role: "usuario",
-          bloqueado: false,
-          login: false,
-        };
+        });
 
-        usuarios.push(nuevoUsuario);
-        localStorage.setItem("usuarios", JSON.stringify(usuarios));
-        setTimeout(() => {
-          navigate("/iniciar-sesion");
-        }, 1000);
+        if (result.status === 201) {
+          Swal.fire({
+            title: "Registro exitoso!",
+            text: "Te hemos enviado un mail de bienvenida!",
+            icon: "success",
+          });
+
+          setTimeout(() => {
+            navigate("/iniciar-sesion");
+          }, 1000);
+        }
       } else {
         alert("Las contraseñas no son iguales");
       }
     }
   };
 
-  const handleClickLogin = (ev) => {
+  const handleClickLogin = async (ev) => {
     ev.preventDefault();
-    if (!formLogin.usuario) {
+    /*   if (!formLogin.usuario) {
       setErrores({ ...errores, usuario: true });
     }
 
     if (!formLogin.contrasenia) {
       setErrores({ ...errores, contrasenia: true });
-    }
-    console.log(formLogin);
+    } */
+
     if (formLogin.usuario && formLogin.contrasenia) {
-      const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-      console.log(usuarios);
-      const usuarioExiste = usuarios.find(
-        (usuario) => usuario.nombreUsuario === formLogin.usuario
-      );
-      console.log(usuarioExiste);
+      const result = await clientAxios.post("/usuarios/iniciarSesion", {
+        nombreUsuario: formLogin.usuario,
+        contrasenia: formLogin.contrasenia,
+      });
 
-      const posicionUsuario = usuarios.findIndex(
-        (usuario) => usuario.nombreUsuario === formLogin.usuario
-      );
+      if (result.status === 200) {
+        Swal.fire({
+          title: "Inicio Exitoso",
+          text: "En breve seras redirigo a tu sesion",
+          icon: "success",
+        });
 
-      if (!usuarioExiste) {
-        return alert("Usuario y/o contraseña incorrecto. USUARIO");
-      }
+        sessionStorage.setItem("token", JSON.stringify(result.data.token));
+        sessionStorage.setItem("rol", JSON.stringify(result.data.rol));
 
-      if (usuarioExiste.contrasenia === formLogin.contrasenia) {
-        usuarios[posicionUsuario].login = true;
-        usuarioExiste.login = true;
-        localStorage.setItem("usuarios", JSON.stringify(usuarios));
-        sessionStorage.setItem("usuario", JSON.stringify(usuarioExiste));
-
-        if (usuarioExiste.role === "admin") {
-          /* location.href */
-          setTimeout(() => {
-            navigate("/admin-inicio");
-          }, 1000);
-        } else {
+        if (result.data.rol === "usuario") {
           setTimeout(() => {
             navigate("/usuario-inicio");
           }, 1000);
+        } else {
+          setTimeout(() => {
+            navigate("/admin-inicio");
+          }, 1000);
         }
       } else {
-        return alert("Usuario y/o contraseña incorrecto. CONTRASEÑA");
+        Swal.fire({
+          title: "Usuario bloqueado",
+          text: "Ponte en contacto con el administrador del sitio",
+          icon: "error",
+        });
       }
     }
   };

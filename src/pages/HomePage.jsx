@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { useApi } from "../helpers/api";
 import CardC from "../components/CardC";
 import { Container, Row } from "react-bootstrap";
+import clientAxios from "../helpers/axios";
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
 
   const getProducts = async () => {
-    const products = await useApi();
-    setProducts(products);
+    const productos = await clientAxios.get("/productos");
+    setProducts(productos.data);
   };
 
   useEffect(() => {
@@ -22,12 +22,12 @@ const HomePage = () => {
         <Row>
           {products.map((product) => (
             <CardC
-              key={product.id}
-              imagen={product.image}
-              titutlo={product.title}
-              descripcion={product.description}
-              precio={product.price}
-              idProducto={product.id}
+              key={product._id}
+              imagen={product.imagen}
+              titulo={product.nombre}
+              descripcion={product.descripcion}
+              precio={product.precio}
+              idProducto={product._id}
             />
           ))}
         </Row>
